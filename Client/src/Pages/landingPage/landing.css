@@ -1,0 +1,129 @@
+:root {
+  --primary-color: hsl(0, 0%, 94%);
+  --secondary-color: hsl(0, 0%, 100%);
+  --background-color: #1e1790;
+  --hover-color: #100c5e;
+  --hover-color-2: #261a92;
+}
+.btn-candidate,
+.btn-hr {
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+}
+.btn-candidate:hover,
+.btn-hr,
+.btn-hr:hover {
+  color: var(--primary-color);
+}
+
+.img-responsive {
+  width: 80%;
+  height: auto;
+  clip-path: circle(38% at 50% 50%);
+  transform: scaleX(-1);
+  animation: 5s ease-in-out infinite shape;
+}
+@keyframes shape {
+  0%,
+  100% {
+    transform: scaleX(-1);
+  }
+  50% {
+    transform: scaleX(1);
+  }
+}
+.btn-hr {
+  background-color: var(--background-color);
+  border: none;
+  border-radius: 5px;
+  margin: 4px 2px;
+}
+.btn-candidate {
+  background-color: var(--primary-color);
+  border: none;
+  border-radius: 5px;
+  color: var(--background-color);
+  margin: 4px 5px;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+}
+.bg-gradient-blur {
+  backdrop-filter: blur(1.5px);
+  -webkit-backdrop-filter: blur(1.5px);
+}
+.btn-hr {
+  padding: 10px 28px;
+  font-size: 1.2rem;
+}
+.btn-candidate:hover {
+  background-color: var(--hover-color-2);
+}
+.btn-hr:hover {
+  background-color: var(--hover-color);
+}
+@media screen and (max-width: 767px) {
+  .img-responsive {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    border-radius: 0 0 70px 70px;
+    width: 100%;
+    height: 45%;
+    object-fit: cover !important;
+    animation: none;
+    clip-path: none;
+  }
+  .w-full.md\:w-1\/2.p-4.md\:order-1 {
+    order: 2;
+    margin-top: calc(50vh - 100px);
+  }
+  .btn-candidate {
+    padding: 10px 20px;
+    font-size: 1rem;
+  }
+  .btn-hr {
+    padding: 10px 28px;
+    font-size: 1rem;
+  }
+  .text-top {
+    margin-top: 25rem !important;
+  }
+}
+@media screen and (max-width: 480px) {
+  .text-top {
+    margin-top: 16rem !important;
+  }
+  .img-responsive {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    border-radius: 0 0 70px 70px;
+    width: 100%;
+    height: 35%;
+    object-fit: cover !important;
+    animation: none;
+    clip-path: none;
+  }
+  .w-full.md\:w-1\/2.p-4.md\:order-1 {
+    order: 2;
+    margin-top: calc(50vh - 170px);
+  }
+  .text-responsive {
+    font-size: 1rem !important;
+  }
+  .heading-responsive {
+    font-size: 2rem !important;
+  }
+  .btn-candidate {
+    padding: 10px 20px;
+    font-size: 1rem;
+  }
+  .btn-hr {
+    padding: 10px 28px;
+    font-size: 1rem;
+  }
+}
