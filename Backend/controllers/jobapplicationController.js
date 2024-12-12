@@ -83,9 +83,10 @@ const getAllApplications = async (req, res) => {
     const applications = await Application.find()
       .populate({
         path: "candidate",
-        select: "_id name email", // Only include selected fields
+        select: "_id name email",
       })
-      .populate("job"); // Assuming 'job' is populated as needed
+      .populate("resume") // Select the resume field from the Application model
+      .populate("job");
 
     res.status(200).json(applications);
   } catch (err) {

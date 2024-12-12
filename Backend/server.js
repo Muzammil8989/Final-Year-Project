@@ -8,6 +8,7 @@ const resumeRoutes = require("./routes/resumeRoutes");
 const questionRoutes = require("./routes/questionRoutes");
 const answerRoutes = require("./routes/answerRoutes");
 const interviewRoutes = require("./routes/interviewRoutes");
+const TestLink = require("./routes/testRoutes");
 
 const cors = require("cors");
 const dotenv = require("dotenv");
@@ -36,7 +37,8 @@ app.use(
   resumeRoutes,
   questionRoutes,
   answerRoutes,
-  interviewRoutes
+  interviewRoutes,
+  TestLink
 );
 
 // Error handling middleware

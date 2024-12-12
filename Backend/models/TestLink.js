@@ -1,26 +1,29 @@
-// models/TestLink.js
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const testLinkSchema = new mongoose.Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Reference to the User model
+  candidateEmail: {
+    type: String,
     required: true,
+    unique: true,
   },
   testLink: {
     type: String,
     required: true,
   },
-  isLinkSent: {
+  expiresAt: {
+    type: Date,
+    required: true,
+  },
+  isUsed: {
     type: Boolean,
     default: false,
   },
-  sentAt: {
+  createdAt: {
     type: Date,
     default: Date.now,
   },
 });
 
-const TestLink = mongoose.model('TestLink', testLinkSchema);
+const TestLink = mongoose.model("TestLink", testLinkSchema);
 
 module.exports = TestLink;

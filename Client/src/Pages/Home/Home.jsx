@@ -10,7 +10,8 @@ import ResetPassword from "../Sign/ResetPassword";
 import Candidate from "../Candidate/Candidate";
 import Hr from "../Recruiter/Hr";
 import JobApplyPage from "@/components/my_component/jobApplyPage/JobApplyPage";
-// import CandidateStepper from "@/components/my_component/candidateStepper/candidateStepper";
+import CandidateStepper from "@/components/my_component/candidateStepper/candidateStepper";
+import ThankYou from "../ThankYou/thankYou";
 
 function Home() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -27,10 +28,11 @@ function Home() {
           <Route path="/Profile" element={<UserProfile />} />
           <Route path="/Candidate" element={<Candidate />} />
           <Route path="/JobApply/:id" element={<JobApplyPage />} />
-          {/* <Route
-            path="/CandidateStepper/:id"
+          <Route
+            path="/CandidateTest"
             element={<CandidateStepper currentStep={currentStep} />}
-          /> */}
+          />
+          <Route path="/ThankYou" element={<ThankYou />} />
           <Route path="/Hr" element={<Hr />} />
         </Routes>
       </BrowserRouter>

@@ -339,6 +339,7 @@ import axios from "axios";
 import { InfinitySpin } from "react-loader-spinner";
 import { MdIntegrationInstructions } from "react-icons/md";
 import InterviewChatbot from "../interviewChatbot/interviewChatbot";
+import Navbar from "../Navbar/Navbar";
 
 const Stepper = () => {
   // State Variables
@@ -415,16 +416,16 @@ const Stepper = () => {
       ),
       description: "Start the assessment test.",
     },
-    // {
-    //   name: "Test",
-    //   icon: <FaClipboardCheck />,
-    //   component: (
-    //     <QuizComponent
-    //       onQuizComplete={() => setCurrentStep((prev) => prev + 1)}
-    //     />
-    //   ),
-    //   description: "Complete the assessment test.",
-    // },
+    {
+      name: "Test",
+      icon: <FaClipboardCheck />,
+      component: (
+        <QuizComponent
+          onQuizComplete={() => setCurrentStep((prev) => prev + 1)}
+        />
+      ),
+      description: "Complete the assessment test.",
+    },
     {
       name: "Interview",
       icon: <FaUserCheck />,
@@ -458,94 +459,101 @@ const Stepper = () => {
   }, []);
 
   return (
-    <div className="-mt-36 flex flex-col items-center rounded-lg bg-purple-50 p-4 shadow-md">
-      {/* Step Indicators */}
-      <div className="mb-4 flex w-full items-center justify-between">
-        {steps.map((step, index) => (
-          <div key={index} className="flex items-center">
-            <div
-              className={`flex items-center justify-center rounded-full border-2 shadow-md ${
-                index < currentStep
-                  ? "bg-green-500 text-white"
-                  : index === currentStep
-                    ? "bg-[#1b0b75] text-white"
-                    : "border-purple-800 bg-white text-[#1b0b75]"
-              } h-12 w-12`}
-            >
-              {step.icon}
-            </div>
-            <div
-              className={`ml-4 text-lg font-semibold ${
-                index === currentStep
-                  ? "text-[#1b0b75]"
-                  : index < currentStep
-                    ? "text-green-500"
-                    : "text-gray-700"
-              }`}
-            >
-              {step.name}
-            </div>
-            {index < steps.length - 1 && (
-              <div
-                className={`mx-4 h-1 ${
-                  index < currentStep - 1
-                    ? "w-16 bg-green-500"
-                    : "w-16 bg-gray-300"
-                }`}
-              ></div>
+    <>
+      <div className="h-screen">
+        <div className="p-4">
+          <Navbar />
+        </div>
+        <div className="m-20 flex flex-col items-center rounded-lg bg-purple-50 p-4 shadow-md">
+          {/* Step Indicators */}
+          <div className="mb-4 flex w-full items-center justify-between">
+            {steps.map((step, index) => (
+              <div key={index} className="flex items-center">
+                <div
+                  className={`flex items-center justify-center rounded-full border-2 shadow-md ${
+                    index < currentStep
+                      ? "bg-green-500 text-white"
+                      : index === currentStep
+                        ? "bg-[#1b0b75] text-white"
+                        : "border-purple-800 bg-white text-[#1b0b75]"
+                  } h-12 w-12`}
+                >
+                  {step.icon}
+                </div>
+                <div
+                  className={`ml-4 text-lg font-semibold ${
+                    index === currentStep
+                      ? "text-[#1b0b75]"
+                      : index < currentStep
+                        ? "text-green-500"
+                        : "text-gray-700"
+                  }`}
+                >
+                  {step.name}
+                </div>
+                {index < steps.length - 1 && (
+                  <div
+                    className={`mx-4 h-1 ${
+                      index < currentStep - 1
+                        ? "w-16 bg-green-500"
+                        : "w-16 bg-gray-300"
+                    }`}
+                  ></div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Current Step Content */}
+          <div className="mt-10 w-full">
+            {isScanning ? (
+              <div className="flex justify-center">
+                <InfinitySpin
+                  width="200"
+                  color="#1b0b75"
+                  ariaLabel="infinity-spin-loading"
+                />
+              </div>
+            ) : (
+              steps[currentStep].component
             )}
           </div>
-        ))}
-      </div>
 
-      {/* Current Step Content */}
-      <div className="mt-10 w-full">
-        {isScanning ? (
-          <div className="flex justify-center">
-            <InfinitySpin
-              width="200"
-              color="#1b0b75"
-              ariaLabel="infinity-spin-loading"
-            />
+          {/* Navigation Buttons */}
+          <div className="mt-6 flex w-full justify-end">
+            {currentStep === 0 && (
+              <Button
+                variant="default"
+                onClick={handleNext}
+                className="mr-4 transform rounded-md bg-[#4431af] px-8 py-4 font-semibold text-white transition-transform duration-300 hover:scale-105"
+              >
+                Next
+              </Button>
+            )}
+
+            {currentStep === 2 && (
+              <Button
+                variant="default"
+                onClick={handleNext}
+                className="mr-4 transform rounded-md bg-[#4431af] px-8 py-4 font-semibold text-white transition-transform duration-300 hover:scale-105"
+              >
+                Next
+              </Button>
+            )}
+
+            {currentStep === steps.length - 1 && (
+              <Button
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                className={`transform rounded-md bg-[#4431af] px-8 py-4 font-semibold text-white transition-transform duration-300 hover:scale-105 ${isSubmitting ? "cursor-not-allowed opacity-50" : ""}`}
+              >
+                {isSubmitting ? "Submitting..." : "Submit Application"}
+              </Button>
+            )}
           </div>
-        ) : (
-          steps[currentStep].component
-        )}
+        </div>
       </div>
-
-      {/* Navigation Buttons */}
-      <div className="mt-6 flex w-full justify-end">
-        {currentStep === 0 && (
-          <Button
-            variant="default"
-            onClick={handleNext}
-            className="mr-4 transform rounded-md bg-[#4431af] px-8 py-4 font-semibold text-white transition-transform duration-300 hover:scale-105"
-          >
-            Next
-          </Button>
-        )}
-
-        {currentStep === 2 && (
-          <Button
-            variant="default"
-            onClick={handleNext}
-            className="mr-4 transform rounded-md bg-[#4431af] px-8 py-4 font-semibold text-white transition-transform duration-300 hover:scale-105"
-          >
-            Next
-          </Button>
-        )}
-
-        {currentStep === steps.length - 1 && (
-          <Button
-            onClick={handleSubmit}
-            disabled={isSubmitting}
-            className={`transform rounded-md bg-[#4431af] px-8 py-4 font-semibold text-white transition-transform duration-300 hover:scale-105 ${isSubmitting ? "cursor-not-allowed opacity-50" : ""}`}
-          >
-            {isSubmitting ? "Submitting..." : "Submit Application"}
-          </Button>
-        )}
-      </div>
-    </div>
+    </>
   );
 };
 

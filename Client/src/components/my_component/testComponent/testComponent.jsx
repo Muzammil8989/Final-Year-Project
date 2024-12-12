@@ -28,7 +28,7 @@ export default function QuizComponent({ onQuizComplete }) {
     const fetchQuestions = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5001/api/jobs/673f7d233bf326e650d2fb85/questions"
+          "http://localhost:5001/api/jobs/673f7d233bf326e650d2fb85/questions",
         );
         console.log("Fetched questions:", response.data); // Debugging: check the fetched questions
         setQuestions(response.data.questions);
@@ -65,18 +65,21 @@ export default function QuizComponent({ onQuizComplete }) {
 
     const selectedAnswerId = selectedAnswers[currentQuestionIndex];
     const questionId = currentQuestion._id;
-    const isAnswerCorrect = selectedAnswerId === currentQuestion.correctAnswerId;
+    const isAnswerCorrect =
+      selectedAnswerId === currentQuestion.correctAnswerId;
 
     if (isAnswerCorrect) setScore((prev) => prev + 1);
 
-    const token = localStorage.getItem('candidateToken');
-    if (!token) return alert('Please log in.');
+    const token = localStorage.getItem("candidateToken");
+    if (!token) return alert("Please log in.");
 
-    const { user: { id: candidateId } } = jwtDecode(token);
+    const {
+      user: { id: candidateId },
+    } = jwtDecode(token);
 
     try {
       const response = await axios.post(
-        'http://localhost:5001/api/answers',
+        "http://localhost:5001/api/answers",
         {
           candidateId,
           questionId,
@@ -86,12 +89,12 @@ export default function QuizComponent({ onQuizComplete }) {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
-        }
+        },
       );
 
-      console.log('Answer submitted successfully:', response.data);
+      console.log("Answer submitted successfully:", response.data);
 
       if (currentQuestionIndex + 1 < questions.length) {
         setCurrentQuestionIndex((prev) => prev + 1);
@@ -100,11 +103,11 @@ export default function QuizComponent({ onQuizComplete }) {
         onQuizComplete(score + (isAnswerCorrect ? 1 : 0));
       }
     } catch (error) {
-      console.error('Error submitting answer:', error);
-      alert('Failed to submit answer. Try again.');
+      console.error("Error submitting answer:", error);
+      alert("Failed to submit answer. Try again.");
     }
   };
-  
+
   // Handle answer selection
   const handleAnswerSelect = (answerId) => {
     if (!isSubmitted) {
@@ -123,7 +126,11 @@ export default function QuizComponent({ onQuizComplete }) {
           <span>Question {currentQuestionIndex + 1}</span>
           <div className="flex items-center space-x-2">
             <Timer className="h-5 w-5" />
-            <span className="text-lg font-medium" role="timer" aria-live="polite">
+            <span
+              className="text-lg font-medium"
+              role="timer"
+              aria-live="polite"
+            >
               {timeLeft}s
             </span>
           </div>
@@ -176,7 +183,9 @@ export default function QuizComponent({ onQuizComplete }) {
         <Button
           onClick={handleSubmit}
           className="w-full transform rounded-md bg-[#4431af] px-8 py-4 font-semibold text-white transition-transform duration-300 hover:scale-105"
-          disabled={isSubmitted || selectedAnswers[currentQuestionIndex] === null}
+          disabled={
+            isSubmitted || selectedAnswers[currentQuestionIndex] === null
+          }
         >
           Submit
         </Button>

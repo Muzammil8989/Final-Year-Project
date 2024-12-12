@@ -27,6 +27,12 @@ const JobApplicationSchema = new mongoose.Schema(
       max: 100,
       default: 0, // Default match score if not provided
     },
+    interviewScore: {
+      type: Number,
+      min: 0,
+      max: 100,
+      default: 0,
+    },
     appliedAt: {
       type: Date,
       default: Date.now,

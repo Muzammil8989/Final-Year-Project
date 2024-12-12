@@ -182,7 +182,7 @@
 
 // export default Dashboard;
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
@@ -201,6 +201,7 @@ import DashboardCharts from "@/components/my_component/Charts/dashboardCharts";
 import { Progress } from "@/components/ui/progress";
 import JobCard from "@/components/my_component/jobsCard/jobCard";
 import SearchBar from "@/components/my_component/searchBar/searchBar";
+import { notification } from "antd";
 
 import TimeDate from "@/components/my_component/TimeDate/timedate";
 import CandidateTable from "@/components/my_component/candidateTable/candidateTable";
@@ -251,6 +252,54 @@ function Dashboard({ isSidebarCollapsed }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
+  const [totalApplications, setTotalApplications] = useState(0);
+
+  useEffect(() => {
+    // Function to fetch total applications
+    const fetchTotalApplications = async () => {
+      try {
+        // Retrieve the token from localStorage
+        const token = localStorage.getItem("recruiterToken");
+
+        if (!token) {
+          // If token is not found, show an error notification
+          notification.error({
+            message: "Unauthorized",
+            description: "Please log in to access this data.",
+          });
+          return;
+        }
+
+        // Configure axios headers with the token
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
+        // Make GET request to the API
+        const response = await axios.get(
+          "http://localhost:5001/api/countTotalApplications",
+          config,
+        );
+
+        // Check if the response contains the total applications count
+        if (response.data && response.data.totalApplications !== undefined) {
+          setTotalApplications(response.data.totalApplications);
+        } else {
+          throw new Error("Invalid response data");
+        }
+      } catch (error) {
+        console.error("Error fetching total applications:", error);
+        notification.error({
+          message: "Error",
+          description: "Failed to fetch total applications. Please try again.",
+        });
+      }
+    };
+
+    fetchTotalApplications();
+  }, []);
 
   const {
     data: jobs = [],
@@ -315,7 +364,7 @@ function Dashboard({ isSidebarCollapsed }) {
             <FiTrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1,234</div>
+            <div className="text-2xl font-bold">{totalApplications}</div>
             <p className="text-xs text-muted-foreground">
               +20.1% from last month
             </p>
