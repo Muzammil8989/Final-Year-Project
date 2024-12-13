@@ -358,25 +358,13 @@ const Stepper = () => {
   // Handle Final Submission
   const handleSubmit = () => {
     setIsSubmitting(true);
-    axios
-      .post("http://127.0.0.1:5000/submit_application", formData)
-      .then((response) => {
-        notification.success({
-          message: "Application Submitted",
-          description:
-            "Your application has been submitted successfully! We will contact you soon.",
-        });
-        setIsSubmitting(false);
-      })
-      .catch((error) => {
-        console.error("Submission Error:", error);
-        notification.error({
-          message: "Submission Failed",
-          description:
-            "There was an error submitting your application. Please try again.",
-        });
-        setIsSubmitting(false);
-      });
+
+    notification.success({
+      message: "Application Submitted",
+      description:
+        "Your application has been submitted successfully! We will contact you soon.",
+    });
+    setIsSubmitting(false);
   };
 
   // Handle Navigation to Next Step

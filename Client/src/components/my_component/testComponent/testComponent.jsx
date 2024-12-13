@@ -28,7 +28,7 @@ export default function QuizComponent({ onQuizComplete }) {
     const fetchQuestions = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5001/api/jobs/673f7d233bf326e650d2fb85/questions",
+          "http://localhost:5001/api/jobs/675833154d91aa6bdda6dde4/questions",
         );
         console.log("Fetched questions:", response.data); // Debugging: check the fetched questions
         setQuestions(response.data.questions);

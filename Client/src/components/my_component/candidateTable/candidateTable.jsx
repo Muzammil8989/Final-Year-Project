@@ -276,16 +276,17 @@ const handleEmailCandidate = async (email) => {
   }
 };
 
-const CandidateTable = () => {
+const CandidateTable = ({ jobId }) => {
   const [data, setData] = useState([]);
-
-  // Function to get the auth token from localStorage
 
   // Function to fetch applications data
   const fetchApplicationsData = async () => {
     try {
-      const response = await fetch("http://localhost:5001/api/get_application");
+      const response = await fetch(
+        `http://localhost:5001/api/get_application?job=${jobId}`,
+      );
       const applications = await response.json();
+      console.log(jobId);
 
       // Format the fetched data as needed for the table
       const formattedData = applications.map((app, index) => [
@@ -303,6 +304,9 @@ const CandidateTable = () => {
         app.matchScore, // Assuming matchScore is the resume score
         app.interviewScore, // Assuming testScore is also available in the app
       ]);
+
+      console.log(formattedData);
+
       setData(formattedData);
     } catch (err) {
       console.error("Error fetching applications data:", err);
@@ -311,8 +315,8 @@ const CandidateTable = () => {
 
   // Fetch both interview data and application data on component mount
   useEffect(() => {
-    fetchApplicationsData(); // Fetch applications data without auth
-  }, []);
+    fetchApplicationsData(); // Fetch applications data on initial render
+  }, [jobId]);
 
   return (
     <div style={{ padding: "24px" }}>

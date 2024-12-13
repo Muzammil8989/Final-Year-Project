@@ -1,3 +1,4 @@
+// JobCard.js
 import React from "react";
 import { motion } from "framer-motion";
 import { Users } from "lucide-react";
@@ -11,13 +12,11 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 
-const JobCard = ({ job, showModal, isSidebarCollapsed }) => {
+const JobCard = ({ job, onSelectJob, isSidebarCollapsed }) => {
   return (
     <motion.div
       className="mb-8"
-      style={{
-        width: isSidebarCollapsed ? "100%" : "270px",
-      }}
+      style={{ width: isSidebarCollapsed ? "100%" : "270px" }}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ scale: 1.05 }}
@@ -61,9 +60,7 @@ const JobCard = ({ job, showModal, isSidebarCollapsed }) => {
         {/* Card Footer: Action Button */}
         <CardFooter>
           <Button
-            onClick={() =>
-              showModal(`Details for ${job.title} at ${job.company}`)
-            }
+            onClick={() => onSelectJob(job)} // Trigger the job selection
             className="w-full bg-purple-600 text-white hover:bg-purple-500"
           >
             View Details
