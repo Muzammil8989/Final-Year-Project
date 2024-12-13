@@ -80,20 +80,31 @@ const createApplication = async (req, res) => {
 // Get all applications
 const getAllApplications = async (req, res) => {
   try {
-    const applications = await Application.find()
-      .populate({
-        path: "candidate",
-        select: "_id name email",
-      })
-      .populate("resume") // Select the resume field from the Application model
-      .populate("job");
+    // Get the jobId from the query string
+    const jobId = req.query.job;
 
-    res.status(200).json(applications);
-  } catch (err) {
-    console.error(err);
-    res
-      .status(500)
-      .json({ error: "An error occurred while fetching applications." });
+    // Ensure jobId is provided
+    if (!jobId) {
+      return res.status(400).json({ error: "Job ID is required" });
+    }
+
+    // Find the job by ID to ensure it's valid (optional step)
+    const job = await Job.findById(jobId);
+    if (!job) {
+      return res.status(404).json({ error: "Job not found" });
+    }
+
+    // Fetch applications for this job
+    const applications = await Application.find({ job: jobId })
+      .populate("candidate") // Assuming 'candidate' is a reference to a User model
+      .populate("resume") // Assuming 'resume' is a reference to a Resume model
+      .exec();
+
+    // Return the applications as a response
+    res.json(applications);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Something went wrong" });
   }
 };
 
