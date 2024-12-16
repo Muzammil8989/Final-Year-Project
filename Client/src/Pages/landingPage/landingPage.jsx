@@ -294,13 +294,13 @@ export default function Landing() {
         <div className="container mx-auto flex items-center justify-between p-4">
           <div className="flex items-center space-x-2">
             <img src={Logo} alt="Logo" className="h-12 w-12 rounded-full" />
-            <span className="text-xl font-extrabold">AI Recruiter</span>
+            <span className="text-xl font-extrabold text-white">AI Recruiter</span>
           </div>
           <nav className="hidden items-center space-x-4 md:flex">
             <Link to="/SignUp">
               <Button
                 variant="ghost"
-                className="hover:bg-muted hover:text-primary"
+                className="hover:bg-muted hover:text-white text-white"
               >
                 Sign Up
               </Button>
