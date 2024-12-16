@@ -246,7 +246,7 @@ function Jobs() {
           <RiRefreshLine size={20} />
           Refresh
         </Button>
-        <div className="flex mb-4">
+        <div className="flex mb-4 gap-2">
           <Button onClick={handlePrev} disabled={currentPage === 1}>
             Previous
           </Button>
