@@ -132,15 +132,15 @@ const columns = [
       sort: false,
       customBodyRender: (value, tableMeta) => {
         const resumeScore = tableMeta.rowData[11]; // Resume Score
-        const testScore = tableMeta.rowData[12]; // Test Score
+
         const email = tableMeta.rowData[2]; // Email
 
         let backgroundColor = "";
         let textColor = "#ffffff";
 
-        if (resumeScore >= 70 && testScore >= 70) {
+        if (resumeScore >= 70) {
           backgroundColor = green[500]; // Green for both above 70%
-        } else if (resumeScore >= 50 || testScore >= 50) {
+        } else if (resumeScore >= 50) {
           backgroundColor = yellow[700]; // Yellow for either score above 50%
           textColor = "#000000";
         } else {

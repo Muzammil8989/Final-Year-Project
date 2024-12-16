@@ -19,7 +19,7 @@ function Home() {
     <div>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Landing />} />
+          {/* <Route path="/" element={<Landing />} /> */}
           <Route path="/SignUp" element={<SignUp />} />
           <Route path="/SignIn" element={<SignIn />} />
           <Route path="/verify/:token" element={<VerifyEmail />} />
@@ -29,7 +29,7 @@ function Home() {
           <Route path="/Candidate" element={<Candidate />} />
           <Route path="/JobApply/:id" element={<JobApplyPage />} />
           <Route
-            path="/CandidateTest"
+            path="/"
             element={<CandidateStepper currentStep={currentStep} />}
           />
           <Route path="/ThankYou" element={<ThankYou />} />

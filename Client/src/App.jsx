@@ -1,6 +1,7 @@
 import { ThemeProvider } from "./components/ui/theme-provider";
 import { ModeToggle } from "./components/ui/mode-toggle";
 import Design from "./components/my_component/design";
+import "regenerator-runtime/runtime";
 
 import "./App.css";
 

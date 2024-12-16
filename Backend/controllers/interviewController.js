@@ -10,6 +10,7 @@ const openai = new OpenAI({
 async function simulateInterview(req, res) {
   const { userAnswer, currentStep } = req.body;
   const candidateId = req.user?.id;
+  let responseSent = false; // Flag to prevent multiple responses
 
   try {
     console.log("Starting simulateInterview function");
@@ -22,7 +23,9 @@ async function simulateInterview(req, res) {
     }
 
     // Check if the candidate's application exists and has a resumeId
-    const application = await Application.findOne({ candidate: candidateId });
+    const application = await Application.findOne({
+      candidate: candidateId,
+    }).populate("job");
     if (!application || !application.resume) {
       console.error("No resume found for the candidate.");
       return res
@@ -34,6 +37,15 @@ async function simulateInterview(req, res) {
       "Candidate application found with resumeId:",
       application.resume
     );
+
+    // Get the job title from the populated job data
+    const jobTitle = application.job?.title;
+    if (!jobTitle) {
+      console.error("Job title not found.");
+      return res.status(400).json({ error: "Job information not found." });
+    }
+
+    console.log("Job title fetched:", jobTitle);
 
     // Fetch or create interview session
     let interviewSession = await Interview.findOne({ candidateId });
@@ -49,16 +61,44 @@ async function simulateInterview(req, res) {
       await interviewSession.save();
     }
 
-    // Handle first question
+    // Handle first question based on job title
     if (currentStep === 0 && interviewSession.questions.length === 0) {
       console.log("Current step is 0, sending first question.");
-      interviewSession.questions.push("Tell me about yourself");
+
+      // Generate a customized question based on job title
+      const question = `What are experiences you have in ${jobTitle}?`; // Job-specific question
+      interviewSession.questions.push(question);
       await interviewSession.save();
 
-      return res.status(200).json({
-        question: interviewSession.questions[0],
-        nextStep: 1,
-      });
+      // Set a timer to limit the duration of answers (1 minute)
+      setTimeout(async () => {
+        if (!responseSent) {
+          // If the answer hasn't been provided by the candidate, we set a default placeholder
+          if (interviewSession.answers.length === currentStep) {
+            interviewSession.answers.push(
+              "No answer provided within time limit."
+            );
+            await interviewSession.save();
+          }
+          // Send the next question automatically after timeout
+          if (!responseSent) {
+            responseSent = true;
+            return res.status(200).json({
+              question: interviewSession.questions[currentStep],
+              nextStep: currentStep + 1,
+            });
+          }
+        }
+      }, 60000); // 1 minute duration for answering
+
+      // Send the question immediately
+      if (!responseSent) {
+        responseSent = true;
+        return res.status(200).json({
+          question: interviewSession.questions[0],
+          nextStep: 1,
+        });
+      }
     }
 
     // Handle generating follow-up questions after the first answer
@@ -90,7 +130,7 @@ async function simulateInterview(req, res) {
         .trim()
         .split("\n")
         .map((q) => q.trim())
-        .slice(0, 5);
+        .slice(0, 2);
 
       console.log("Generated questions:", generatedQuestions);
 
