@@ -81,7 +81,7 @@ const JobDetailCard = ({ job, isSidebarCollapsed }) => {
             </h3>
             <p className="text-sm font-medium text-gray-200">{job.company}</p>
             <p className="text-sm font-medium text-gray-200">{job.location}</p>
-            <p className="text-sm font-medium text-gray-200">${job.salary}</p>
+            <p className="text-sm font-medium text-gray-200">{job.salary}</p>
             <p className="mt-2 text-center text-sm text-gray-100">
               {job.description}
             </p>

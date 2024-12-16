@@ -36,9 +36,7 @@ const fetchStatusCounts = async () => {
 
     const statusCounts = {
       Applied: data?.Applied || 0,
-      Screening: data?.Screening || 0,
       Interview: data?.Interview || 0,
-      Offer: data?.Offer || 0,
       Hired: data?.Hired || 0,
       Rejected: data?.Rejected || 0,
     };
@@ -49,9 +47,7 @@ const fetchStatusCounts = async () => {
     console.error("Error fetching status counts:", error);
     return {
       Applied: 0,
-      Screening: 0,
       Interview: 0,
-      Offer: 0,
       Hired: 0,
       Rejected: 0,
     };
@@ -174,9 +170,9 @@ function Dashboard({ isSidebarCollapsed }) {
         <TimeDate />
       </div>
 
-      <div className="mb-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <div className="flex text-center justify-center p-4 mb-8">
+        <Card className="w-full">
+          <CardHeader className="flex flex-row items-center justify-center space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Total Applications
             </CardTitle>
@@ -184,46 +180,6 @@ function Dashboard({ isSidebarCollapsed }) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalApplications}</div>
-            <p className="text-xs text-muted-foreground">
-              +20.1% from last month
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Open Positions
-            </CardTitle>
-            <AiOutlineClockCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">23</div>
-            <p className="text-xs text-muted-foreground">4 closing this week</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Time to Hire</CardTitle>
-            <FiTrendingDown className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">18 days</div>
-            <p className="text-xs text-muted-foreground">
-              -2.4 days from last quarter
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Offer Acceptance Rate
-            </CardTitle>
-            <AiOutlineCheckCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">89%</div>
-            <p className="text-xs text-muted-foreground">+5% from last year</p>
           </CardContent>
         </Card>
       </div>
@@ -240,7 +196,32 @@ function Dashboard({ isSidebarCollapsed }) {
           <CardContent>
             <div className="space-y-4">
               {[
-                /* Your progress stages */
+                {
+                  stage: "Applied",
+                  count: statusCounts.Applied.count,
+                  percentage: statusCounts.Applied.percentage,
+                  color: "bg-blue-500",
+                },
+              
+                {
+                  stage: "Interview",
+                  count: statusCounts.Interview.count,
+                  percentage: statusCounts.Interview.percentage,
+                  color: "bg-orange-500",
+                },
+                {
+                  stage: "Hired",
+                  count: statusCounts.Hired.count,
+                  percentage: statusCounts.Hired.percentage,
+                  color: "bg-purple-500",
+                },
+              
+                {
+                  stage: "Rejected",
+                  count: statusCounts.Rejected.count,
+                  percentage: statusCounts.Rejected.percentage,
+                  color: "bg-red-500",
+                },
               ].map((stage, index) => (
                 <div key={index} className="flex items-center">
                   <div className="w-36 text-sm font-medium">{stage.stage}</div>

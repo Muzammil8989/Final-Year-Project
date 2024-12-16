@@ -18,7 +18,7 @@ const JobApplicationSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Applied", "Screening", "Interview", "Offer", "Hired", "Rejected"],
+      enum: ["Applied", "Interview", "Hired", "Rejected"],
       default: "Applied",
     },
     matchScore: {
@@ -32,6 +32,12 @@ const JobApplicationSchema = new mongoose.Schema(
       min: 0,
       max: 100,
       default: 0,
+    },
+    quizScore: {
+      type: Number, // The quiz score will also be a numeric value between 0 and 100
+      min: 0,
+      max: 100,
+      default: 0, // Default quiz score if not provided
     },
     appliedAt: {
       type: Date,

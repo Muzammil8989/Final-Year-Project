@@ -442,8 +442,7 @@ export default function ResumeForm({
       setIsSubmitting(false);
       onSubmitSuccess();
 
-      // Optional: Clear jobId from localStorage after successful application
-      localStorage.removeItem("jobId");
+      
     } catch (error) {
       console.error("Submission Error:", error);
       console.error("Error Response:", error.response?.data);
@@ -616,7 +615,7 @@ export default function ResumeForm({
                   placeholder="Enter your education"
                 />
                 <InputField
-                  label="Colleges"
+                  label="College"
                   icon={FaUniversity}
                   name="colleges"
                   placeholder="Enter your colleges (comma-separated)"

@@ -9,6 +9,8 @@ const {
   updateApplication,
   deleteApplication,
   getStatusCounts,
+  updateApplicationStatus,
+  sendReportToCandidate
 } = require("../controllers/jobapplicationController");
 
 // @route   GET /api/applications/status-counts
@@ -46,6 +48,7 @@ router.post(
   validateApplication,
   createApplication
 );
+router.post("/send-report", sendReportToCandidate);
 
 // @route   GET /api/applications
 // @desc    Get all applications
@@ -72,5 +75,8 @@ router.put(
 // @desc    Delete an application
 // @access  Private
 router.delete("/:id", auth, deleteApplication);
+
+router.put("/update-status/:candidateId", auth, updateApplicationStatus);
+
 
 module.exports = router;

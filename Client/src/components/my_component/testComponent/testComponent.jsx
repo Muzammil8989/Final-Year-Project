@@ -25,12 +25,19 @@ export default function QuizComponent({ onQuizComplete }) {
 
   // Fetch questions from the server
   useEffect(() => {
+    const jobId = localStorage.getItem("jobId"); // Get jobId from localStorage
+    if (!jobId) {
+      console.error("Job ID not found in localStorage");
+      return;
+    }
+
     const fetchQuestions = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5001/api/jobs/675833154d91aa6bdda6dde4/questions",
+          `http://localhost:5001/api/jobs/${jobId}/questions`,
         );
         console.log("Fetched questions:", response.data); // Debugging: check the fetched questions
+
         setQuestions(response.data.questions);
         setSelectedAnswers(Array(response.data.questions.length).fill(null));
       } catch (error) {

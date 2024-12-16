@@ -404,16 +404,16 @@ const Stepper = () => {
       ),
       description: "Start the assessment test.",
     },
-    // {
-    //   name: "Test",
-    //   icon: <FaClipboardCheck />,
-    //   component: (
-    //     <QuizComponent
-    //       onQuizComplete={() => setCurrentStep((prev) => prev + 1)}
-    //     />
-    //   ),
-    //   description: "Complete the assessment test.",
-    // },
+    {
+      name: "Test",
+      icon: <FaClipboardCheck />,
+      component: (
+        <QuizComponent
+          onQuizComplete={() => setCurrentStep((prev) => prev + 1)}
+        />
+      ),
+      description: "Complete the assessment test.",
+    },
     {
       name: "Interview",
       icon: <FaUserCheck />,

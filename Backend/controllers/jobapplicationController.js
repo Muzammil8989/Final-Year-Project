@@ -2,6 +2,7 @@ const { matchJobWithResume } = require("../services/jobResumeService"); // Assum
 const Application = require("../models/jobapplicationModel");
 const Job = require("../models/jobpostedModel");
 const Resume = require("../models/resumeModal");
+const transporter = require("../config/nodemailer");
 
 const createApplication = async (req, res) => {
   const { job, resume, status } = req.body;
@@ -74,6 +75,66 @@ const createApplication = async (req, res) => {
     res
       .status(500)
       .json({ message: "An error occurred while creating the application." });
+  }
+};
+
+// Update the status of an application based on job and candidate
+const updateApplicationStatus = async (req, res) => {
+  const { _id, status } = req.body; // Get job, candidate, and status from request body
+
+  // Ensure all required fields are provided
+  if (!status || !_id) {
+    return res
+      .status(400)
+      .json({ message: "Please provide both _id and status." });
+  }
+
+  // Validate ObjectId format
+  const mongoose = require("mongoose");
+  if (!mongoose.Types.ObjectId.isValid(_id)) {
+    return res.status(400).json({ message: "Invalid ID format." });
+  }
+
+  // Define valid statuses
+  const validStatuses = ["Applied", "Interview", "Hired", "Rejected"];
+  if (!validStatuses.includes(status)) {
+    return res
+      .status(400)
+      .json({ message: "Invalid status. Please provide a valid status." });
+  }
+
+  try {
+    // Log to verify the input
+    console.log("Finding application with ID:", _id);
+
+    // Find the application based on _id
+    const application = await Application.findOne({ _id });
+
+    // If no application found, return error
+    if (!application) {
+      return res.status(404).json({ message: "Application not found." });
+    }
+
+    // Log the application found (for debugging purposes)
+    console.log("Found application:", application);
+
+    // Update the application's status
+    application.status = status;
+
+    // Save the updated application
+    const updatedApplication = await application.save();
+
+    // Return success message with updated application data
+    res.status(200).json({
+      message: "Application status updated successfully.",
+      application: updatedApplication,
+    });
+  } catch (err) {
+    // Handle error and log it for debugging
+    console.error("Error updating application status:", err);
+    res.status(500).json({
+      message: "An error occurred while updating the application status.",
+    });
   }
 };
 
@@ -211,6 +272,98 @@ const getStatusCounts = async (req, res) => {
   }
 };
 
+const sendReportToCandidate = async (req, res) => {
+  const { applicationId } = req.body; // Get the application _id from the request body
+
+  try {
+    // Find the application by _id and populate job and resume details
+    const application = await Application.findById(applicationId)
+      .populate("candidate")
+      .populate("job");
+
+    if (!application) {
+      return res
+        .status(404)
+        .json({ message: "Application not found for the given ID" });
+    }
+
+    // Extract the candidate's email and other application data
+    const candidateEmail = application.candidate.email;
+    const { matchScore, interviewScore, quizScore, status } = application;
+    const { title, description } = application.job;
+    const candidateName = application.candidate.name;
+
+    // Create the email content with inline CSS for better styling
+    const emailContent = `
+      <html>
+        <body style="font-family: Arial, sans-serif; color: #333; background-color: #f4f4f4; padding: 20px;">
+          <div style="background-color: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); max-width: 600px; margin: 0 auto;">
+            <div style="background-color: #007bff; color: white; padding: 10px; border-radius: 5px; text-align: center;">
+              <h1 style="font-size: 24px;">Application Report</h1>
+            </div>
+            <div style="margin-top: 20px;">
+              <p>Dear <strong>${candidateName}</strong>,</p>
+              <p>Here is the report for your application to the job: <strong>${title}</strong>.</p>
+              
+              <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                <tr>
+                  <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd; background-color: #f2f2f2;">Status:</th>
+                  <td style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd; color: #555; font-weight: bold;">${status}</td>
+                </tr>
+                <tr>
+                  <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd; background-color: #f2f2f2;">Job Title:</th>
+                  <td style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd; color: #555;">${title}</td>
+                </tr>
+                <tr>
+                  <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd; background-color: #f2f2f2;">Job Description:</th>
+                  <td style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd; color: #555;">${description}</td>
+                </tr>
+                <tr>
+                  <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd; background-color: #f2f2f2;">Resume Match Score:</th>
+                  <td style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd; color: #555;">${matchScore}</td>
+                </tr>
+                <tr>
+                  <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd; background-color: #f2f2f2;">Interview Score:</th>
+                  <td style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd; color: #555;">${interviewScore}</td>
+                </tr>
+                <tr>
+                  <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd; background-color: #f2f2f2;">Quiz Score:</th>
+                  <td style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd; color: #555;">${quizScore}</td>
+                </tr>
+              </table>
+            </div>
+            <div style="font-size: 14px; text-align: center; color: #777; margin-top: 30px;">
+              <p>Thank you for applying!</p>
+              <p>Best regards,<br/>AIRA Team</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    // Define the email options
+    const mailOptions = {
+      from: process.env.EMAIL, // Sender email address
+      to: candidateEmail, // Recipient email address
+      subject: "Your Application Report",
+      html: emailContent, // HTML content of the email
+    };
+
+    // Send the email
+    await transporter.sendMail(mailOptions);
+
+    // Respond with success message
+    res
+      .status(200)
+      .json({ message: "Report sent to the candidate successfully." });
+  } catch (err) {
+    console.error("Error sending report:", err);
+    res
+      .status(500)
+      .json({ message: "An error occurred while sending the report." });
+  }
+};
+
 module.exports = {
   createApplication,
   getAllApplications,
@@ -218,4 +371,6 @@ module.exports = {
   updateApplication,
   deleteApplication,
   getStatusCounts,
+  updateApplicationStatus,
+  sendReportToCandidate,
 };
