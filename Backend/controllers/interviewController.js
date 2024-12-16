@@ -192,11 +192,12 @@ async function simulateInterview(req, res) {
 
       // Calculate the average score
       const averageScore = totalScore / interviewSession.answers.length;
-      console.log(`Calculated average score: ${averageScore}`);
+      const roundedScore = Math.round(averageScore); // Round off the average score to the nearest whole number
+      console.log(`Calculated average score: ${roundedScore}`);
 
       // Update the Application model with the interview score
       if (application) {
-        application.interviewScore = averageScore; // Update the score
+        application.interviewScore = roundedScore; // Update the score with the rounded value
         await application.save();
         console.log("Application score updated:", application);
       } else {
