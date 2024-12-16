@@ -10,6 +10,7 @@ import Tooltip from "@mui/material/Tooltip";
 import axios from "axios";
 import { Select, MenuItem } from "@mui/material";
 import { notification } from 'antd';
+import { RiRefreshLine } from 'react-icons/ri';
 
 const columns = [
   {
@@ -434,18 +435,17 @@ const handleSendReport = async (id) => {
 
 const CandidateTable = ({ jobId }) => {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // Function to fetch applications data
   const fetchApplicationsData = async () => {
+    setLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:5001/api/get_application?job=${jobId}`,
+        `http://localhost:5001/api/get_application?job=${jobId}`
       );
       const applications = await response.json();
-      console.log(jobId);
 
-      // Format the fetched data as needed for the table
-      const formattedData = applications.map((app, index) => [
+      const formattedData = applications.map((app) => [
         app._id,
         app.candidate.name,
         app.candidate.email,
@@ -454,57 +454,76 @@ const CandidateTable = ({ jobId }) => {
         app.resume.address,
         app.resume.skills,
         app.resume.education,
-        app.resume.colleges[0], // Assuming only one college is relevant
-        app.resume.filePath, // Path to the resume file
+        app.resume.colleges[0],
+        app.resume.filePath,
         app.candidate.email,
-        app.matchScore, // Assuming matchScore is the resume score
+        app.matchScore,
         app.quizScore,
-        app.interviewScore, // Assuming testScore is also available in the app
+        app.interviewScore,
         app.status,
       ]);
-
-      console.log(formattedData);
-
       setData(formattedData);
     } catch (err) {
       console.error("Error fetching applications data:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Fetch both interview data and application data on component mount
   useEffect(() => {
-    fetchApplicationsData(); // Fetch applications data on initial render
+    fetchApplicationsData();
   }, [jobId]);
+
+  const handleRefresh = () => {
+    fetchApplicationsData();
+  }
+  
 
   return (
     <div style={{ padding: "24px" }}>
-      <ThemeProvider theme={getMuiTheme()}>
-        <MUIDataTable
-          title={"Candidate List"}
-          data={data}
-          columns={columns}
-          options={{
-            filterType: "checkbox",
-            responsive: "standard",
-            elevation: 0,
-            rowsPerPage: 5,
-            rowsPerPageOptions: [5, 10, 20],
-            selectableRows: "none",
-            downloadOptions: {
-              filename: "candidate_data.csv",
-              separator: ",",
-            },
-            onDownload: (buildHead, buildBody, columns, data) => {
-              return "\uFEFF" + buildHead(columns) + buildBody(data);
-            },
-            textLabels: {
-              body: {
-                noMatch: "Sorry, no matching records found",
+      {/* Refresh Button */}
+      <Button
+        variant="contained"
+        color="secondary"
+        onClick={handleRefresh}
+        startIcon={<RiRefreshLine />}
+        style={{ marginBottom: "20px" }}
+      >
+        Refresh
+      </Button>
+
+      {/* Loading spinner while fetching data */}
+      {loading ? (
+        <CircularProgress />
+      ) : (
+        <ThemeProvider theme={getMuiTheme()}>
+          <MUIDataTable
+            title={"Candidate List"}
+            data={data}
+            columns={columns}
+            options={{
+              filterType: "checkbox",
+              responsive: "standard",
+              elevation: 0,
+              rowsPerPage: 5,
+              rowsPerPageOptions: [5, 10, 20],
+              selectableRows: "none",
+              downloadOptions: {
+                filename: "candidate_data.csv",
+                separator: ",",
               },
-            },
-          }}
-        />
-      </ThemeProvider>
+              onDownload: (buildHead, buildBody, columns, data) => {
+                return "\uFEFF" + buildHead(columns) + buildBody(data);
+              },
+              textLabels: {
+                body: {
+                  noMatch: "Sorry, no matching records found",
+                },
+              },
+            }}
+          />
+        </ThemeProvider>
+      )}
     </div>
   );
 };
